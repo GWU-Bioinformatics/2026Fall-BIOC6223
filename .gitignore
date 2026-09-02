@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,jupyternotebooks
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,jupyternotebooks
 
+# Ignore the `bioc-6223` virtualenvironment directory
+bioc-6223
+
 ### JupyterNotebooks ###
 # gitignore template for Jupyter Notebooks
 # website: http://jupyter.org/
