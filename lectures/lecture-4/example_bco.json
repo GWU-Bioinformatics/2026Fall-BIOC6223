@@ -1,0 +1,87 @@
+{
+    "object_id": "https://example.com/bco/blast_analysis_001",
+    "spec_version": "https://w3id.org/ieee/ieee-2791-schema/",
+    "etag": "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+    "provenance_domain": {
+        "name": "BLAST Nucleotide Sequence Similarity Analysis",
+        "version": "1.0.0",
+        "created": "2026-09-15T00:00:00.000Z",
+        "modified": "2026-09-15T00:00:00.000Z",
+        "contributors": [
+            {
+                "contribution": ["createdBy"],
+                "name": "Pat McNeely",
+                "email": "pmcneely@gwu.edu",
+                "affiliation": "George Washington University"
+            }
+        ],
+        "license": "https://spdx.org/licenses/CC-BY-4.0.html"
+    },
+    "usability_domain": "This BCO describes a BLAST nucleotide sequence similarity search against the NCBI nr database.",
+    "description_domain": {
+        "keywords": ["BLAST", "sequence similarity", "nucleotide", "NCBI", "nr"],
+        "pipeline_steps": [
+            {
+                "step_number": 1,
+                "name": "BLAST Search",
+                "description": "Run blastn against the nr nucleotide database",
+                "version": "2.14.0",
+                "input_list": [
+                    {
+                        "uri": "file:///input/query.fasta",
+                        "filename": "query.fasta"
+                    }
+                ],
+                "output_list": [
+                    {
+                        "uri": "file:///output/blast_results.xml",
+                        "filename": "blast_results.xml"
+                    }
+                ]
+            }
+        ]
+    },
+    "execution_domain": {
+        "script": [
+            {"uri": {"uri": "file:///scripts/run_blast.sh"}}
+        ],
+        "script_driver": "bash",
+        "software_prerequisites": [
+            {
+                "name": "BLAST+",
+                "version": "2.14.0",
+                "uri": {
+                    "uri": "https://blast.ncbi.nlm.nih.gov/doc/blast-help/downloadblastdata.html"
+                }
+            }
+        ],
+        "external_data_endpoints": [
+            {
+                "name": "NCBI nr database",
+                "url": "https://ftp.ncbi.nlm.nih.gov/blast/db/"
+            }
+        ],
+        "environment_variables": {
+            "BLASTDB": "/data/blast/db"
+        }
+    },
+    "io_domain": {
+        "input_subdomain": [
+            {
+                "uri": {
+                    "uri": "file:///input/query.fasta",
+                    "filename": "query.fasta"
+                }
+            }
+        ],
+        "output_subdomain": [
+            {
+                "mediatype": "application/xml",
+                "uri": {
+                    "uri": "file:///output/blast_results.xml",
+                    "filename": "blast_results.xml"
+                }
+            }
+        ]
+    }
+}
