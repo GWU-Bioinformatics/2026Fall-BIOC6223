@@ -1,0 +1,159 @@
+{
+    "object_id": "https://example.com/bco/rnaseq_alignment_001",
+    "spec_version": "https://w3id.org/ieee/ieee-2791-schema/",
+    "etag": "b3c4d5e6f7a8b3c4d5e6f7a8b3c4d5e6f7a8b3c4d5e6f7a8b3c4d5e6f7a8b3c4",
+    "provenance_domain": {
+        "name": "RNA-seq Read Alignment and Quantification",
+        "version": "1.0.0",
+        "created": "2026-09-10T09:00:00.000Z",
+        "modified": "2026-09-12T14:30:00.000Z",
+        "contributors": [
+            {
+                "contribution": ["createdBy", "authoredBy"],
+                "name": "Sarah Chen",
+                "email": "schen@example.edu",
+                "affiliation": "Example University"
+            },
+            {
+                "contribution": ["contributedBy"],
+                "name": "Marcus Webb",
+                "email": "mwebb@example.edu",
+                "affiliation": "Example University"
+            }
+        ],
+        "license": "https://spdx.org/licenses/CC-BY-4.0.html"
+    },
+    "usability_domain": [
+        "This BCO describes an RNA-seq pipeline for quantifying gene expression from paired-end Illumina reads.",
+        "Reads are quality-trimmed, aligned to the human reference genome, sorted, and quantified against a gene annotation."
+    ],
+    "description_domain": {
+        "keywords": ["RNA-seq", "gene expression", "alignment", "STAR", "featureCounts", "Homo sapiens"],
+        "pipeline_steps": [
+            {
+                "step_number": 1,
+                "name": "Quality Trimming",
+                "description": "Remove low-quality bases and adapter sequences from paired-end reads",
+                "version": "0.6.10",
+                "input_list": [
+                    {"uri": "file:///data/raw/sample_R1.fastq.gz", "filename": "sample_R1.fastq.gz"},
+                    {"uri": "file:///data/raw/sample_R2.fastq.gz", "filename": "sample_R2.fastq.gz"}
+                ],
+                "output_list": [
+                    {"uri": "file:///data/trimmed/sample_R1_trimmed.fastq.gz", "filename": "sample_R1_trimmed.fastq.gz"},
+                    {"uri": "file:///data/trimmed/sample_R2_trimmed.fastq.gz", "filename": "sample_R2_trimmed.fastq.gz"},
+                    {"uri": "file:///data/trimmed/trimming_report.txt", "filename": "trimming_report.txt"}
+                ]
+            },
+            {
+                "step_number": 2,
+                "name": "Genome Alignment",
+                "description": "Align trimmed reads to the human reference genome using STAR",
+                "version": "2.7.11a",
+                "input_list": [
+                    {"uri": "file:///data/trimmed/sample_R1_trimmed.fastq.gz", "filename": "sample_R1_trimmed.fastq.gz"},
+                    {"uri": "file:///data/trimmed/sample_R2_trimmed.fastq.gz", "filename": "sample_R2_trimmed.fastq.gz"},
+                    {"uri": "file:///data/genome/GRCh38", "filename": "GRCh38"}
+                ],
+                "output_list": [
+                    {"uri": "file:///data/aligned/Aligned.out.bam", "filename": "Aligned.out.bam"},
+                    {"uri": "file:///data/aligned/Log.final.out", "filename": "Log.final.out"}
+                ]
+            },
+            {
+                "step_number": 3,
+                "name": "Sort and Index",
+                "description": "Sort the BAM file by coordinate and build an index for fast access",
+                "version": "1.18",
+                "input_list": [
+                    {"uri": "file:///data/aligned/Aligned.out.bam", "filename": "Aligned.out.bam"}
+                ],
+                "output_list": [
+                    {"uri": "file:///data/aligned/aligned_sorted.bam", "filename": "aligned_sorted.bam"},
+                    {"uri": "file:///data/aligned/aligned_sorted.bam.bai", "filename": "aligned_sorted.bam.bai"}
+                ]
+            },
+            {
+                "step_number": 4,
+                "name": "Gene Quantification",
+                "description": "Count reads overlapping annotated gene features using featureCounts",
+                "version": "2.0.6",
+                "input_list": [
+                    {"uri": "file:///data/aligned/aligned_sorted.bam", "filename": "aligned_sorted.bam"},
+                    {"uri": "file:///data/genome/annotation.gtf", "filename": "annotation.gtf"}
+                ],
+                "output_list": [
+                    {"uri": "file:///data/counts/counts.txt", "filename": "counts.txt"},
+                    {"uri": "file:///data/counts/counts.txt.summary", "filename": "counts.txt.summary"}
+                ]
+            }
+        ]
+    },
+    "execution_domain": {
+        "script": [
+            {"uri": {"uri": "file:///scripts/run_rnaseq.sh"}}
+        ],
+        "script_driver": "bash",
+        "software_prerequisites": [
+            {
+                "name": "Trim Galore",
+                "version": "0.6.10",
+                "uri": {"uri": "https://github.com/FelixKrueger/TrimGalore"}
+            },
+            {
+                "name": "STAR",
+                "version": "2.7.11a",
+                "uri": {"uri": "https://github.com/alexdobin/STAR"}
+            },
+            {
+                "name": "samtools",
+                "version": "1.18",
+                "uri": {"uri": "https://www.htslib.org/"}
+            },
+            {
+                "name": "subread (featureCounts)",
+                "version": "2.0.6",
+                "uri": {"uri": "https://subread.sourceforge.net/"}
+            }
+        ],
+        "external_data_endpoints": [
+            {
+                "name": "Human reference genome GRCh38",
+                "url": "https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000001405.26/"
+            },
+            {
+                "name": "Ensembl gene annotation",
+                "url": "https://ftp.ensembl.org/pub/release-110/gtf/homo_sapiens/"
+            }
+        ],
+        "environment_variables": {
+            "STAR_GENOME_DIR": "/data/genome/star_index",
+            "THREADS": "8"
+        }
+    },
+    "io_domain": {
+        "input_subdomain": [
+            {
+                "uri": {
+                    "uri": "file:///data/raw/sample_R1.fastq.gz",
+                    "filename": "sample_R1.fastq.gz"
+                }
+            },
+            {
+                "uri": {
+                    "uri": "file:///data/raw/sample_R2.fastq.gz",
+                    "filename": "sample_R2.fastq.gz"
+                }
+            }
+        ],
+        "output_subdomain": [
+            {
+                "mediatype": "text/tab-separated-values",
+                "uri": {
+                    "uri": "file:///data/counts/counts.txt",
+                    "filename": "counts.txt"
+                }
+            }
+        ]
+    }
+}
