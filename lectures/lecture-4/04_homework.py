@@ -37,7 +37,7 @@ print(f"  License: {prov['license']}")
 
 print(f"  Contributors ({len(prov['contributors'])}):")
 for contributor in prov["contributors"]:
-    contributions = ", ".join(contributor["contribution"])
+    contributions = ", ".join(contributor["contribution"])  # HW 'join' line
     print(f"    {contributor['name']} <{contributor['email']}> — {contributions}")
 
 ## END BLOCK 2 ##
