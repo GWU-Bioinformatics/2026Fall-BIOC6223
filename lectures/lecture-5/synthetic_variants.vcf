@@ -1,0 +1,27 @@
+##fileformat=VCFv4.2
+##fileDate=20260917
+##source=SyntheticTeachingData
+##reference=synthetic_chr1_100bp.fa
+##contig=<ID=chr1,length=100>
+##FILTER=<ID=PASS,Description="All filters passed">
+##FILTER=<ID=LowQual,Description="Variant quality score below threshold (QUAL < 20)">
+##FILTER=<ID=LowDepth,Description="Insufficient read depth (DP < 10)">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Total read depth at the locus">
+##INFO=<ID=AF,Number=A,Type=Float,Description="Estimated allele frequency of ALT allele">
+##INFO=<ID=MQ,Number=1,Type=Float,Description="RMS mapping quality">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype (0=REF, 1=ALT; unphased with /)">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Per-sample read depth">
+##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype quality (Phred-scaled)">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	SAMPLE01
+chr1	5	SYN_001	G	A	50	PASS	DP=32;AF=0.50;MQ=60.0	GT:DP:GQ	0/1:32:48
+chr1	12	.	T	C	30	PASS	DP=28;AF=0.50;MQ=58.2	GT:DP:GQ	0/1:28:28
+chr1	18	SYN_002	A	G	12	LowQual	DP=25;AF=0.44;MQ=55.1	GT:DP:GQ	0/1:25:10
+chr1	23	.	C	CT	45	PASS	DP=30;AF=0.50;MQ=59.0	GT:DP:GQ	0/1:30:43
+chr1	28	SYN_003	C	T	60	PASS	DP=40;AF=1.00;MQ=60.0	GT:DP:GQ	1/1:40:57
+chr1	35	.	T	G	8	LowDepth	DP=6;AF=0.50;MQ=42.3	GT:DP:GQ	0/1:6:6
+chr1	42	SYN_004	GG	G	55	PASS	DP=35;AF=0.50;MQ=60.0	GT:DP:GQ	0/1:35:52
+chr1	54	.	G	C	40	PASS	DP=29;AF=1.00;MQ=60.0	GT:DP:GQ	1/1:29:38
+chr1	62	SYN_005	A	T	35	PASS	DP=33;AF=0.48;MQ=59.5	GT:DP:GQ	0/1:33:33
+chr1	78	.	T	A	15	LowQual	DP=22;AF=0.41;MQ=51.7	GT:DP:GQ	0/1:22:13
+chr1	86	SYN_006	C	G	48	PASS	DP=38;AF=0.50;MQ=60.0	GT:DP:GQ	0/1:38:46
+chr1	97	.	C	A	52	PASS	DP=31;AF=1.00;MQ=60.0	GT:DP:GQ	1/1:31:50

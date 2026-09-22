@@ -1,0 +1,294 @@
+{
+  "object_id": "https://biocomputeobject.org/BCO_BIOC6223_L5_001/1.0",
+  "spec_version": "https://w3id.org/ieee/ieee-2791-schema/",
+  "etag": "placeholder_replace_with_sha256_of_object",
+  "provenance_domain": {
+    "name": "Lecture 5 Variant Calling Walkthrough — BIOC 6223",
+    "version": "1.0.0",
+    "created": "2026-09-22T00:00:00.000Z",
+    "modified": "2026-09-22T00:00:00.000Z",
+    "contributors": [
+      {
+        "name": "Pat McNeely",
+        "email": "pmcneely@gwu.edu",
+        "affiliation": "The George Washington University",
+        "contribution": ["createdBy"]
+      }
+    ],
+    "license": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  "usability_domain": [
+    "Demonstrates a variant calling pipeline for BIOC 6223 (Introduction to",
+    " Bioinformatics) at The George Washington University.",
+    "Covers the full conceptual pipeline from raw FASTQ reads through quality",
+    " control, alignment, and variant calling to VCF output. Includes a live ",
+    " Python walkthrough parsing a synthetic VCF file to illustrate reading, ",
+    "filtering, and classifying variants by type (SNP, INS, DEL). Intended as ",
+    " a companion BCO to the lecture walkthrough, illustrating how a pipeline ",
+    "maps onto BCO domains (description_domain, execution_domain, io_domain)."
+  ],
+  "description_domain": {
+    "keywords": [
+      "variant calling",
+      "VCF",
+      "SNP",
+      "indel",
+      "bioinformatics pipeline",
+      "reproducibility",
+      "Python",
+      "BWA",
+      "GATK",
+      "BioCompute Object"
+    ],
+    "platform": ["Linux"],
+    "pipeline_steps": [
+      {
+        "step_number": 1,
+        "name": "Quality Control",
+        "description": "Assess raw sequencing read quality with FastQC and trim low-quality bases and adapter sequences with Trim Galore.",
+        "version": "0.11.9",
+        "prerequisite": [],
+        "input_list": [
+          {
+            "uri": "file://input/reads.fastq.gz",
+            "access_time": "2026-09-17T00:00:00.000Z"
+          }
+        ],
+        "output_list": [
+          {
+            "uri": "file://output/reads_trimmed.fastq.gz",
+            "access_time": "2026-09-17T00:00:00.000Z"
+          },
+          {
+            "uri": "file://output/fastqc_report.html",
+            "access_time": "2026-09-17T00:00:00.000Z"
+          }
+        ]
+      },
+      {
+        "step_number": 2,
+        "name": "Read Alignment",
+        "description": "Align trimmed reads to the reference genome with BWA-MEM; sort and index the resulting BAM file with SAMtools.",
+        "version": "0.7.17",
+        "prerequisite": [
+          {
+            "name": "Quality Control",
+            "uri": {
+              "uri": "file://output/reads_trimmed.fastq.gz"
+            }
+          }
+        ],
+        "input_list": [
+          {
+            "uri": "file://output/reads_trimmed.fastq.gz"
+          },
+          {
+            "uri": "file://input/synthetic_chr1_100bp.fa"
+          }
+        ],
+        "output_list": [
+          {
+            "uri": "file://output/aligned_sorted.bam"
+          },
+          {
+            "uri": "file://output/aligned_sorted.bam.bai"
+          }
+        ]
+      },
+      {
+        "step_number": 3,
+        "name": "Variant Calling",
+        "description": "Call SNPs and indels from aligned reads with GATK HaplotypeCaller. Apply quality and depth filters: QUAL < 20 flagged LowQual; DP < 10 flagged LowDepth.",
+        "version": "4.5.0.0",
+        "prerequisite": [
+          {
+            "name": "Read Alignment",
+            "uri": {
+              "uri": "file://output/aligned_sorted.bam"
+            }
+          }
+        ],
+        "input_list": [
+          {
+            "uri": "file://output/aligned_sorted.bam"
+          },
+          {
+            "uri": "file://input/synthetic_chr1_100bp.fa"
+          }
+        ],
+        "output_list": [
+          {
+            "uri": "file://output/synthetic_variants.vcf"
+          }
+        ]
+      },
+      {
+        "step_number": 4,
+        "name": "VCF Parsing and Filtering",
+        "description": "Parse the VCF with Python: separate meta-information, column header, and data lines; retain PASS variants only; classify each as SNP, INS, or DEL.",
+        "version": "3.11",
+        "prerequisite": [
+          {
+            "name": "Variant Calling",
+            "uri": {
+              "uri": "file://output/synthetic_variants.vcf"
+            }
+          }
+        ],
+        "input_list": [
+          {
+            "uri": "file://output/synthetic_variants.vcf"
+          }
+        ],
+        "output_list": [
+          {
+            "uri": "file://output/pass_variants_summary.txt"
+          }
+        ]
+      }
+    ]
+  },
+  "execution_domain": {
+    "environment_variables": {},
+    "script_driver": "shell",
+    "script": [
+      {
+        "uri": {
+          "filename": "process_vcf.py",
+          "uri": "https://github.com/gwu-bioc6223/course-materials/blob/main/lectures/lecture-5/process_vcf.py",
+          "access_time": "2026-09-22T00:00:00.000Z"
+        }
+      }
+    ],
+    "software_prerequisites": [
+      {
+        "uri": {
+          "filename": "FastQC-0.11.9.zip",
+          "uri": "https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip",
+          "access_time": "2026-09-17T00:00:00.000Z"
+        },
+        "name": "FastQC",
+        "version": "0.11.9"
+      },
+      {
+        "uri": {
+          "filename": "trim_galore_v0.6.10.tar.gz",
+          "uri": "https://github.com/FelixKrueger/TrimGalore/archive/refs/tags/0.6.10.tar.gz",
+          "access_time": "2026-09-17T00:00:00.000Z"
+        },
+        "name": "Trim Galore",
+        "version": "0.6.10"
+      },
+      {
+        "uri": {
+          "filename": "bwa-0.7.17.tar.bz2",
+          "uri": "https://sourceforge.net/projects/bio-bwa/files/bwa-0.7.17.tar.bz2",
+          "access_time": "2026-09-17T00:00:00.000Z"
+        },
+        "name": "BWA",
+        "version": "0.7.17"
+      },
+      {
+        "uri": {
+          "filename": "samtools-1.20.tar.bz2",
+          "uri": "https://github.com/samtools/samtools/releases/download/1.20/samtools-1.20.tar.bz2",
+          "access_time": "2026-09-17T00:00:00.000Z"
+        },
+        "name": "SAMtools",
+        "version": "1.20"
+      },
+      {
+        "uri": {
+          "filename": "gatk-4.5.0.0.zip",
+          "uri": "https://github.com/broadinstitute/gatk/releases/download/4.5.0.0/gatk-4.5.0.0.zip",
+          "access_time": "2026-09-17T00:00:00.000Z"
+        },
+        "name": "GATK HaplotypeCaller",
+        "version": "4.5.0.0"
+      },
+      {
+        "uri": {
+          "filename": "Python-3.11.9.tar.xz",
+          "uri": "https://www.python.org/ftp/python/3.11.9/Python-3.11.9.tar.xz",
+          "access_time": "2026-09-17T00:00:00.000Z"
+        },
+        "name": "Python",
+        "version": "3.11.9"
+      }
+    ],
+    "external_data_endpoints": [
+      {
+        "name": "Synthetic reference genome (chr1, 100 bp) — teaching dataset",
+        "url": "https://github.com/gwu-bioc6223/course-materials/blob/main/lectures/lecture-5/synthetic_chr1_100bp.fa"
+      },
+      {
+        "name": "Synthetic VCF file (12 variants: 10 SNPs, 1 INS, 1 DEL; one sample SAMPLE01) — teaching dataset",
+        "url": "https://github.com/gwu-bioc6223/course-materials/blob/main/lectures/lecture-5/synthetic_variants.vcf"
+      }
+    ]
+  },
+  "io_domain": {
+    "input_subdomain": [
+      {
+        "mediatype": "text/plain",
+        "uri": {
+          "filename": "synthetic_chr1_100bp.fa",
+          "uri": "file://input/synthetic_chr1_100bp.fa",
+          "access_time": "2026-09-17T00:00:00.000Z"
+        }
+      },
+      {
+        "mediatype": "application/gzip",
+        "uri": {
+          "filename": "reads.fastq.gz",
+          "uri": "file://input/reads.fastq.gz",
+          "access_time": "2026-09-17T00:00:00.000Z"
+        }
+      }
+    ],
+    "output_subdomain": [
+      {
+        "mediatype": "text/plain",
+        "uri": {
+          "filename": "synthetic_variants.vcf",
+          "uri": "file://output/synthetic_variants.vcf",
+          "access_time": "2026-09-17T00:00:00.000Z"
+        }
+      },
+      {
+        "mediatype": "text/plain",
+        "uri": {
+          "filename": "pass_variants_summary.txt",
+          "uri": "file://output/pass_variants_summary.txt",
+          "access_time": "2026-09-17T00:00:00.000Z"
+        }
+      }
+    ]
+  },
+  "parametric_domain": [
+    {
+      "param": "QUAL_threshold",
+      "value": "20",
+      "step": "3"
+    },
+    {
+      "param": "DP_threshold",
+      "value": "10",
+      "step": "3"
+    },
+    {
+      "param": "FILTER_pass_value",
+      "value": "PASS",
+      "step": "4"
+    }
+  ],
+  "error_domain": {
+    "empirical_error": {
+      "variant_quality_threshold": "Variants with QUAL < 20 are flagged LowQual and excluded; threshold chosen for lecture demonstration only, not clinical use.",
+      "read_depth_threshold": "Variants with DP < 10 are flagged LowDepth and excluded; synthetic depths are artificially low for illustration."
+    },
+    "algorithmic_error": {
+      "synthetic_data_caveat": "All input data are synthetically generated for teaching purposes and do not represent real patient or experimental data. Pipeline accuracy metrics are liikewise suggestions, and will vary in the real world."
+    }
+  }
+}
